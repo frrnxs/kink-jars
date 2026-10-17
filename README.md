@@ -79,8 +79,6 @@ The project is based on a standalone `index.html` page and may use:
 - **HTML** — Application structure.
 - **CSS** — Layout, responsive design, animations, and themes.
 - **JavaScript** — Jar management, sliders, randomization, drag and drop, and undo functionality.
-- **Canvas or equivalent browser APIs** — Client-side image rendering.
-- **Browser download APIs** — Saving rendered images locally.
 
 The core application does not require a backend.
 
