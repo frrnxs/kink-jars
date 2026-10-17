@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,87 +10,471 @@
 <meta name="robots" content="noindex">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Nunito:wght@400;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Canvas Confetti Library -->
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
-  :root{--c:#e63946;--on-c:#fff;--ink:#1d1a17;--bg:#fbf6ef;--card:#fff;--muted:#6b625a;--line:#e9e0d5}
-  *{box-sizing:border-box}
+  :root{
+    --c:#e63946;
+    --on-c:#fff;
+    --ink:#151311;
+    --bg:#f5f0e6;
+    --card:#fff;
+    --muted:#6b625a;
+    --line:#e4d8cb;
+    --shadow:0 10px 30px rgba(0,0,0,0.06);
+    --shadow-sm:0 4px 12px rgba(0,0,0,0.04);
+  }
+  [data-theme="dark"]{
+    --c:#ff4d5e;
+    --on-c:#12100e;
+    --ink:#f7f4ef;
+    --bg:#13110e;
+    --card:#1c1815;
+    --muted:#a3998f;
+    --line:#2c2520;
+    --shadow:0 10px 30px rgba(0,0,0,0.4);
+    --shadow-sm:0 4px 12px rgba(0,0,0,0.2);
+  }
+  *{box-sizing:border-box;}
   html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--bg);color:var(--ink);font-family:Nunito,system-ui,sans-serif;font-size:18px;line-height:1.45;padding-bottom:110px}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Plus Jakarta Sans',system-ui,sans-serif;font-size:17px;line-height:1.5;padding-bottom:120px}
   @media(min-width:960px){body{padding-bottom:40px}}
-  .wrap{max-width:1180px;margin:0 auto;padding:28px 16px}
-  header{margin-bottom:22px}
-  header h1{font-family:Oswald,sans-serif;font-weight:700;font-size:clamp(44px,9vw,68px);margin:0;line-height:1}
+  .wrap{max-width:1180px;margin:0 auto;padding:32px 20px}
+  header{margin-bottom:28px}
+  header h1{font-family:'Oswald',sans-serif;font-weight:700;font-size:clamp(46px,9vw,70px);margin:0;line-height:1;letter-spacing:0.01em}
   header h1 span{color:var(--c);-webkit-text-stroke:2px var(--ink);paint-order:stroke fill}
-  header p{margin:10px 0 0;color:var(--muted);max-width:640px}
-  .layout{display:grid;gap:24px}
-  @media(min-width:960px){.layout{grid-template-columns:minmax(0,1fr) 430px}.side{position:sticky;top:20px;align-self:start}}
-  .panel{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:20px;margin-bottom:20px}
-  .step{font-family:Oswald,sans-serif;font-weight:600;font-size:14px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-  h2{font-family:Oswald,sans-serif;font-weight:600;font-size:27px;margin:2px 0 12px;line-height:1.15}
-  .hint{color:var(--muted);font-size:16px;margin:-4px 0 14px}
-  input[type=text]{font:inherit;font-size:20px;width:100%;padding:14px 16px;border:2px solid var(--line);border-radius:14px;background:#fff;color:var(--ink)}
-  input[type=text]:focus{border-color:var(--ink);outline:none}
-  button{font:inherit;cursor:pointer;color:var(--ink)}
-  button:focus-visible,input:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+  header p{margin:12px 0 0;color:var(--muted);max-width:640px;font-size:18px}
+  .layout{display:grid;gap:28px}
+  @media(min-width:960px){.layout{grid-template-columns:minmax(0,1fr) 430px}.side{position:sticky;top:24px;align-self:start}}
+  .panel{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:24px;margin-bottom:24px;box-shadow:var(--shadow)}
+  .step{font-family:'Oswald',sans-serif;font-weight:600;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+  h2{font-family:'Oswald',sans-serif;font-weight:600;font-size:28px;margin:4px 0 12px;line-height:1.15;letter-spacing:0.02em}
+  .hint{color:var(--muted);font-size:15px;margin:-2px 0 16px}
+  input[type=text] {font:inherit;font-size:18px;width:100%;padding:14px 18px;border:2px solid var(--line);border-radius:14px;background:var(--card);color:var(--ink)}
+  input[type=text]:focus {border-color:var(--c);outline:none}
+  
+  /* Compact & expanding textarea */
+  textarea.kink-name-input {
+    font: inherit;
+    font-size: 16px;
+    width: 100%;
+    padding: 8px 16px;
+    border: 2px solid var(--line);
+    border-radius: 999px;
+    background: var(--card);
+    color: var(--ink);
+    resize: none;
+    overflow: hidden;
+    line-height: 1.35;
+    height: 40px;
+    transition: height 0.2s ease, border-radius 0.2s ease, padding 0.2s ease, border-color 0.2s ease;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  textarea.kink-name-input:focus {
+    border-color: var(--c);
+    outline: none;
+    border-radius: 14px;
+    padding: 12px 16px;
+    white-space: nowrap;
+    height: 46px !important;
+  }
+
+  button{font:inherit;cursor:pointer;color:var(--ink); display: inline-flex; align-items: center; justify-content: center; gap: 8px;}
+  button:active{transform:scale(0.97)}
+  button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--c);outline-offset:3px}
 
   /* color picker */
-  .picker{display:grid;gap:18px}
-  @media(min-width:620px){.picker{grid-template-columns:1fr 170px;align-items:center}}
-  .swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;max-width:420px}
-  .sw{aspect-ratio:1;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 2px var(--line);padding:0;min-width:40px}
-  .sw[aria-pressed=true]{box-shadow:0 0 0 3px var(--ink)}
-  .sliders{display:grid;gap:12px;margin-top:16px;max-width:420px}
-  .sl{display:grid;grid-template-columns:52px 1fr 44px;align-items:center;gap:10px;font-weight:700;font-size:16px}
+  .picker{display:grid;gap:20px}
+  @media(min-width:620px){.picker{grid-template-columns:1fr minmax(0, 170px);align-items:center}}.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;max-width:420px}
+  .sw{aspect-ratio:1;border-radius:50%;border:3px solid var(--card);box-shadow:0 0 0 2px var(--line);padding:0;min-width:40px}
+  .sw[aria-pressed=true]{box-shadow:0 0 0 3px var(--c); transform: scale(1.08);}
+  .sliders{display:grid;gap:12px;margin-top:18px;max-width:420px}
+  .sl{display:grid;grid-template-columns:56px 1fr 44px;align-items:center;gap:10px;font-weight:700;font-size:15px}
   .sl output{text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
-  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;border-radius:13px;border:2px solid var(--ink);margin:0;background:#ccc}
-  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:#fff;border:3px solid var(--ink);box-shadow:0 2px 4px rgba(0,0,0,.25)}
-  input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:#fff;border:3px solid var(--ink)}
-  .hexrow{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap}
-  .hexrow input{width:130px;font-size:18px;padding:10px 12px;font-family:ui-monospace,Menlo,monospace;text-transform:uppercase}
-  .ghost{background:#fff;border:2px solid var(--ink);border-radius:999px;padding:9px 16px;font-weight:700;font-size:16px}
-  .ghost:hover{background:var(--bg)}
-  .preview-jars{display:flex;justify-content:center;gap:2px}
-  .preview-jars canvas{width:62px;height:101px}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:26px;border-radius:13px;border:2px solid var(--line);margin:0;background:var(--line)}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:30px;height:30px;border-radius:50%;background:var(--card);border:3px solid var(--ink);box-shadow:0 2px 6px rgba(0,0,0,.2)}
+  input[type=range]::-moz-range-thumb{width:26px;height:26px;border-radius:50%;background:var(--card);border:3px solid var(--ink)}
+  
+  /* Centered hexrow with theme highlight buttons */
+  .hexrow{display:flex;gap:10px;align-items:center;margin-top:16px;flex-wrap:wrap;justify-content:center;max-width:420px}
+  .hexrow input{width:130px;font-size:17px;padding:10px 14px;font-family:ui-monospace,Menlo,monospace;text-transform:uppercase;border-radius:14px;}
+  
+  .ghost{background:var(--card);border:2px solid var(--line);border-radius:999px;padding:10px 18px;font-weight:700;font-size:15px}
+  .ghost:hover{background:var(--line)}
 
-  /* questions */
-  .q{display:grid;grid-template-columns:76px 1fr;gap:14px;align-items:center;padding:14px 0;border-top:2px dashed var(--line)}
+  /* Gentle theme-highlighted buttons */
+  .btn-highlight {
+    background: color-mix(in srgb, var(--c) 12%, var(--card));
+    border: 2px solid color-mix(in srgb, var(--c) 40%, var(--line));
+    color: var(--ink);
+  }
+  .btn-highlight:hover {
+    background: color-mix(in srgb, var(--c) 22%, var(--card));
+    border-color: var(--c);
+  }
+
+  /* Disabled state styling for add kink button */
+  .ghost.btn-highlight:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: var(--line);
+    border-color: var(--line);
+    transform: none !important;
+  }
+
+.preview-jars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+.preview-jars canvas {
+  width: 100%;
+  max-width: 62px;
+  height: auto;
+  aspect-ratio: 152 / 248;
+}
+
+  /* starter pack action bar & animated border */
+  .presets-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+  }
+  
+  @keyframes borderDashRotate {
+    0% { border-color: var(--c); box-shadow: 0 0 0 0 color-mix(in srgb, var(--c) 40%, transparent); }
+    50% { border-color: var(--muted); box-shadow: 0 0 10px 2px color-mix(in srgb, var(--c) 30%, transparent); }
+    100% { border-color: var(--c); box-shadow: 0 0 0 0 color-mix(in srgb, var(--c) 40%, transparent); }
+  }
+
+  .preset-btn {
+    background: var(--card);
+    border: 2px dashed var(--c);
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+    animation: borderDashRotate 3s ease-in-out infinite;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+  .preset-btn:hover { 
+    border-color: var(--c); 
+    color: var(--ink); 
+    background: color-mix(in srgb, var(--c) 15%, var(--card));
+    animation: none;
+  }
+
+  /* questions / rating sliders / smooth entrance animation */
+  @keyframes fadeInScale {
+    from { opacity: 0; transform: translateY(12px) scale(0.98); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  .q {
+    display: grid;
+    grid-template-columns: 24px 76px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 16px 0;
+    border-top: 2px dashed var(--line);
+    background: var(--card);
+    user-select: none;
+    transition: transform 0.2s ease, background-color 0.2s ease, opacity 0.25s ease;
+    animation: fadeInScale 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
   .q:first-of-type{border-top:0}
+  .q.dragging { opacity: 0.35; background: var(--line); animation: none; }
+  .drag-handle {
+    cursor: grab;
+    color: var(--muted);
+    font-size: 20px;
+    text-align: center;
+    font-weight: 800;
+    letter-spacing: -2px;
+    line-height: 1;
+    padding: 10px 0;
+    touch-action: none;
+  }
+  .drag-handle:active { cursor: grabbing; color: var(--c); }
   .q canvas{width:76px;height:124px}
-  .qnum{font-size:14px;color:var(--muted);font-weight:700}
-  .qlabel{font-family:Oswald,sans-serif;font-weight:600;font-size:25px;line-height:1.1;margin:2px 0 10px}
-  .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;max-width:380px}
-  .scale button{height:52px;border-radius:14px;border:2px solid var(--ink);background:#fff;font-family:Oswald,sans-serif;font-weight:600;font-size:22px;transition:transform .08s}
-  .scale button:active{transform:scale(.94)}
-  .scale button[aria-pressed=true]{background:var(--c);color:var(--on-c);box-shadow:0 3px 0 var(--ink)}
-  .ends{display:flex;justify-content:space-between;max-width:380px;font-size:13px;color:var(--muted);font-weight:700;margin-top:5px}
+  .qnum{font-size:13px;color:var(--muted);font-weight:700}
+  
+  .q > div:last-child { width: 100%; }
+  .rating-control {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    margin-top: 8px;
+  }
+  .rating-control input[type=range] {
+    flex: 1;
+    width: 100%;
+    height: 20px;
+    border-radius: 10px;
+  }
+  .rating-control input[type=range]::-webkit-slider-thumb { width: 24px; height: 24px; }
+  .rating-val {
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 20px;
+    min-width: 55px;
+    text-align: right;
+    color: var(--ink);
+  }
+  .ends {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 13px;
+    color: var(--muted);
+    font-weight: 700;
+    margin-top: 4px;
+  }
+
+  /* style shuffle button */
+  .shuffle-btn {
+    background: var(--card);
+    border: 2px solid var(--line);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    flex-shrink: 0;
+    color: var(--muted);
+  }
+  .shuffle-btn:hover { border-color: var(--c); color: var(--c); }
 
   /* poster + save */
-  .poster{width:100%;height:auto;display:block;border-radius:12px;border:2px solid var(--line);background:#fff}
-  .big{display:block;width:100%;margin-top:16px;padding:18px 20px;border-radius:18px;border:3px solid var(--ink);background:var(--c);color:var(--on-c);font-family:Oswald,sans-serif;font-weight:700;font-size:26px;letter-spacing:.02em;box-shadow:0 5px 0 var(--ink)}
-  .big:active{transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
-  .small-links{display:flex;justify-content:space-between;gap:10px;margin-top:14px;font-size:15px;color:var(--muted)}
+  .poster{width:100%;height:auto;display:block;border-radius:16px;border:2px solid var(--line);background:var(--card)}
+  .big{display:block;width:100%;margin-top:18px;padding:18px 24px;border-radius:18px;border:3px solid var(--ink);background:var(--c);color:var(--on-c);font-family:'Oswald',sans-serif;font-weight:700;font-size:24px;letter-spacing:0.02em;box-shadow:0 6px 0 var(--ink)}
+  .big:active{transform:translateY(3px);box-shadow:0 3px 0 var(--ink)}
+  .small-links{display:flex;justify-content:space-between;gap:10px;margin-top:16px;font-size:15px;color:var(--muted)}
   .linkbtn{background:none;border:0;padding:4px 0;text-decoration:underline;color:var(--muted);font-size:15px}
 
-  .bar{position:fixed;left:0;right:0;bottom:0;background:rgba(251,246,239,.96);border-top:2px solid var(--line);backdrop-filter:blur(6px);z-index:5}
-  .bar-in{max-width:1180px;margin:0 auto;padding:10px 16px calc(10px + env(safe-area-inset-bottom));display:flex;align-items:center;gap:14px}
-  .bar-in span{font-weight:700;font-size:15px;color:var(--muted);flex:1}
-  .bar .big{width:auto;margin:0;padding:12px 22px;font-size:21px;box-shadow:0 4px 0 var(--ink)}
+  .bar{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:2px solid var(--line);backdrop-filter:blur(12px);z-index:5}
+  .bar-in {
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 12px 16px;
+  }
+  .bar-in span {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--on-c);
+    background-color: var(--c);
+    padding: 10px 24px;
+    border-radius: 999px;
+    display: inline-block;
+    text-align: center;
+    box-shadow: 0 3px 0 var(--ink);
+    border: 2px solid var(--ink);
+    flex: 1;
+  }
+  .bar .big{width:auto;margin:0;padding:12px 20px;font-size:18px;box-shadow:0 3px 0 var(--ink)}
   @media(min-width:960px){.bar{display:none}}
 
-  #modal{position:fixed;inset:0;background:rgba(20,16,12,.6);display:flex;align-items:center;justify-content:center;padding:16px;z-index:10}
-  #modal[hidden]{display:none}
-  .sheet{background:#fff;border-radius:22px;padding:20px;max-width:440px;width:100%;max-height:92vh;overflow:auto;text-align:center}
-  .sheet h3{font-family:Oswald,sans-serif;font-size:28px;margin:0 0 6px}
-  .sheet p{margin:0 0 12px;color:var(--muted);font-size:16px}
-  .sheet img{width:100%;border-radius:10px;border:2px solid var(--line)}
-  .privacy{font-size:14px;color:var(--muted);text-align:center;margin-top:8px}
+  /* Floating Dark Mode Button */
+  .fab-dark {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: var(--card);
+    border: 2px solid var(--line);
+    color: var(--ink);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: var(--shadow);
+    cursor: pointer;
+    z-index: 100;
+  }
+  .fab-dark:hover { border-color: var(--c); transform: scale(1.05); }
+
+  /* Footer styling */
+  footer {
+    text-align: center;
+    margin-top: 40px;
+    padding: 20px;
+    color: var(--muted);
+    font-size: 14px;
+    border-top: 2px dashed var(--line);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  footer a {
+    color: var(--c);
+    text-decoration: none;
+    font-weight: 700;
+  }
+  footer a:hover {
+    text-decoration: underline;
+  }
+
+  /* Toast notification container */
+  #toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--ink);
+    color: var(--bg);
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-weight: 700;
+    box-shadow: var(--shadow);
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s ease;
+    pointer-events: none;
+  }
+  #toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+    pointer-events: auto;
+  }
+  #toast button {
+    background: var(--c);
+    color: var(--on-c);
+    border: none;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-weight: 800;
+    cursor: pointer;
+  }
+
+  /* Smooth Success Modal */
+  #modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(20,16,12,.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    backdrop-filter: blur(8px);
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+  #modal.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  .sheet {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 24px;
+    max-width: 440px;
+    width: 100%;
+    max-height: 92vh;
+    overflow: auto;
+    text-align: center;
+    border: 2px solid var(--line);
+    box-shadow: var(--shadow);
+    transform: scale(0.92);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  #modal.show .sheet {
+    transform: scale(1);
+  }
+  .sheet h3{font-family:'Oswald',sans-serif;font-size:28px;margin:0 0 6px}
+  .sheet p{margin:0 0 16px;color:var(--muted);font-size:16px}
+  .sheet img{width:100%;border-radius:12px;border:2px solid var(--line)}
+
+  /* Smooth Age Verification Modal */
+  #ageModal {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 8, 6, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 9999;
+    backdrop-filter: blur(8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+  }
+  #ageModal.show {
+    opacity: 1;
+    visibility: visible;
+  }
+  .age-sheet {
+    background: var(--card);
+    border-radius: 24px;
+    padding: 32px;
+    max-width: 440px;
+    width: 100%;
+    text-align: center;
+    border: 2px solid var(--line);
+    box-shadow: var(--shadow);
+    transform: scale(0.92);
+    transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+  #ageModal.show .age-sheet {
+    transform: scale(1);
+  }
+  .age-sheet h3 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 32px;
+    margin: 0 0 12px;
+    color: var(--ink);
+  }
+  .age-sheet p {
+    margin: 0 0 24px;
+    color: var(--muted);
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .age-actions {
+    display: flex;
+    gap: 12px;
+    flex-direction: column;
+  }
 </style>
 </head>
 <body>
+
+<!-- Age Verification Modal -->
+<div id="ageModal">
+  <div class="age-sheet">
+    <h3>Age Verification</h3>
+    <p>This website contains adult-themed content and is intended solely for adults aged 18 or older. Please confirm your age to enter.</p>
+    <div class="age-actions">
+      <button class="big" id="ageAgree" type="button" style="margin-top:0;">I am 18 or older</button>
+      <button class="ghost" id="ageExit" type="button" style="width:100%; justify-content:center; padding: 14px;">I am under 18</button>
+    </div>
+  </div>
+</div>
+
+<button class="fab-dark" id="darkModeToggle" aria-label="Toggle dark mode">🌙</button>
+
 <div class="wrap">
   <header>
-    <h1>Fill your <span>jars</span></h1>
-    <p>Pick a color, rate each one from 1 (a little) to 5 (overflowing), then save your picture. Not your thing? Skip it and the jar stays empty.</p>
+    <h1>Fill your <span>jars!</span></h1>
+    <p>Pick a color, slide to rate each one from 0% to 100%, and customize your personalized poster.</p>
   </header>
 
   <div class="layout">
@@ -99,12 +483,16 @@
         <div class="step">Step 1</div>
         <h2>What's your name?</h2>
         <p class="hint">It goes on the blank line at the top. Nickname is fine, or leave it blank.</p>
-        <input type="text" id="name" maxlength="24" autocomplete="off" placeholder="Your name">
+        <input type="text" id="name" maxlength="24" autocomplete="off" placeholder="Click to enter your name">
+        <div style="margin-top: 16px;">
+          <p class="hint" style="margin-bottom: 6px;">Header Title Text:</p>
+          <input type="text" id="headerTitle" maxlength="15" autocomplete="off" placeholder="Kink Jars">
+        </div>
       </section>
 
       <section class="panel">
         <div class="step">Step 2</div>
-        <h2>Pick your color</h2>
+        <h2>Pick your color!</h2>
         <div class="picker">
           <div>
             <div class="swatches" id="swatches" aria-label="Color choices"></div>
@@ -115,20 +503,32 @@
             </div>
             <div class="hexrow">
               <input type="text" id="hex" maxlength="7" spellcheck="false" aria-label="Color code">
-              <button class="ghost" id="surprise" type="button">Surprise me</button>
+              <button class="ghost btn-highlight" id="surprise" type="button">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                Surprise me
+              </button>
             </div>
           </div>
           <div class="preview-jars" aria-hidden="true">
-            <canvas id="pv1"></canvas><canvas id="pv2"></canvas><canvas id="pv3"></canvas>
+            <canvas id="pv1"></canvas>
+            <canvas id="pv2"></canvas>
+            <canvas id="pv3"></canvas>
           </div>
         </div>
       </section>
 
       <section class="panel">
         <div class="step">Step 3</div>
-        <h2>Fill your jars</h2>
-        <p class="hint">Tap a number. Tap it again to empty the jar.</p>
+        <h2>Fill your jars!</h2>
+        <p class="hint">Load quick starter packs, reorder using the handle dots, or create your own custom items below (Maximum 80 jars).</p>
+        <div class="presets-bar">
+          <button class="preset-btn" type="button" id="loadStarter">✨ Load Starter Pack</button>
+        </div>
         <div id="questions"></div>
+        <button class="ghost btn-highlight" id="addKink" type="button" style="margin-top: 20px; width: 100%;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          Add new kink
+        </button>
       </section>
     </main>
 
@@ -137,7 +537,19 @@
         <div class="step">Step 4</div>
         <h2>Your jars</h2>
         <canvas class="poster" id="poster" aria-label="Preview of your filled jars"></canvas>
-        <button class="big" id="save" type="button">Save my jars</button>
+
+        <div class="sliders" style="margin-top: 20px; max-width: 100%;">
+          <label class="sl">Cols<input type="range" id="colsSlider" min="4" max="8" value="6"><output id="colsVal">6</output></label>
+        </div>
+        <div style="margin-top: 12px; display: flex; align-items: center; gap: 10px;">
+          <input type="checkbox" id="showPercentage" checked style="width: 20px; height: 20px; accent-color: var(--c); cursor: pointer;">
+          <label for="showPercentage" style="font-size: 15px; font-weight: 700; cursor: pointer; color: var(--ink);">Show percentage on jars</label>
+        </div>
+
+        <button class="big" id="save" type="button">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+          Save my jars
+        </button>
         <div class="small-links">
           <span>Nothing leaves your phone.</span>
           <button class="linkbtn" id="reset" type="button">Start over</button>
@@ -145,11 +557,31 @@
       </section>
     </aside>
   </div>
+
+  <footer>
+    <div>Based originally on <a href="https://lockedtony.github.io/kink-jars/" target="_blank" rel="noopener">lockedtony.github.io/kink-jars/</a></div>
+    <div>
+      <img src="https://hitscounter.dev/api/hit?url=https%3A%2F%2Ffrrnxs.github.io%2Fknk_jar%2F&label=Visitor+Counter&icon=person-fill&color=%231aa179&message=&style=flat&tz=UTC">
+    </div>
+  </footer>
 </div>
 
-<div class="bar"><div class="bar-in"><span id="progress">0 of 28 filled</span><button class="big" id="saveBar" type="button">Save my jars</button></div></div>
+<div class="bar">
+  <div class="bar-in">
+    <span id="progress">0 of 0 filled</span>
+    <button class="big" id="saveBar" type="button">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline></svg>
+      Save my jars
+    </button>
+  </div>
+</div>
 
-<div id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mt">
+<div id="toast">
+  <span id="toastMsg">Kink deleted.</span>
+  <button id="toastUndo" type="button">Undo</button>
+</div>
+
+<div id="modal" role="dialog" aria-modal="true" aria-labelledby="mt">
   <div class="sheet">
     <h3 id="mt">Here are your jars!</h3>
     <p>If it didn't download, press and hold the picture (or right-click it) and choose “Save image.”</p>
@@ -159,26 +591,114 @@
 </div>
 
 <script>
-/* ===== Edit the jars here. Each array is the label, one entry per line. ===== */
-const JARS = [
-  ["being","a dom"],["being","a sub"],["being","a switch"],["choking"],["being","choked"],["spanking"],["being","spanked"],
-  ["ddlg / mdlb"],["age","play"],["doing stuff","in public"],["wax","play"],["water","sports"],["role","play"],["consensual","non consent"],
-  ["having","orgasms","controlled"],["controlling","orgasms"],["gags"],["feet"],["anal"],["being","tied up"],["tying","people up"],
-  ["humiliating","or","degrading"],["being","humiliated","or","degraded"],["bdsm"],["threesomes"],["sadism"],["masochism"],["spit"]
-];
-const PRESETS = ["#e63946","#ff5d8f","#ff8c42","#ffd23f","#7bd389","#2ec4b6","#3a86ff","#5b2a86","#c77dff","#8d1d3a","#8d5524","#2b2d42"];
-const COLS = 7, INK = "#151311", PW = 1200;
-const ROWS = Math.ceil(JARS.length / COLS);
-const PH = 260 + (ROWS - 1) * 345 + 360;
-const STORE = "kinkjars-v1";
+/* ===== Age Verification Check (Smooth Fade In) ===== */
+const ageModal = document.getElementById("ageModal");
+ageModal.classList.add("show");
 
-/* ===== state ===== */
-let state = { name: "", color: "#e63946", answers: JARS.map(() => 0) };
-try {
-  const s = JSON.parse(localStorage.getItem(STORE) || "null");
-  if (s && Array.isArray(s.answers)) state = { ...state, ...s, answers: JARS.map((_, i) => s.answers[i] || 0) };
-} catch (e) {}
-const persist = () => { try { localStorage.setItem(STORE, JSON.stringify(state)); } catch (e) {} };
+document.getElementById("ageAgree").onclick = () => {
+  ageModal.classList.remove("show");
+};
+
+document.getElementById("ageExit").onclick = () => {
+  window.location.href = "https://www.google.com";
+};
+
+const STARTER_JARS = [
+  ["Cuddling"], ["Teasing"], ["Praise"], ["Control"], ["Roleplay"], ["Edging"]
+];
+const DEFAULT_JARS = [];
+const MAX_JARS = 80;
+
+// Theme-specific color palettes
+const PRESETS_LIGHT = ["#e63946","#ff5d8f","#ff8c42","#ffd23f","#7bd389","#2ec4b6","#3a86ff","#5b2a86","#c77dff","#8d1d3a","#8d5524","#2b2d42"];
+const PRESETS_DARK = ["#ff4d5e","#ff758c","#ff9e64","#ffdb58","#98fb98","#40e0d0","#6495ed","#9370db","#da70d6","#cd5c5c","#deb887","#4682b4","#121212","#1a1a1a"];
+
+const PW = 1200;
+
+/* ===== state (Starts empty on every page refresh/reopen) ===== */
+let state = { 
+  name: "", 
+  headerTitle: "Kink Jars",
+  color: "#e63946", 
+  jars: DEFAULT_JARS, 
+  answers: DEFAULT_JARS.map(() => 0),
+  overrides: {},
+  colsOverride: null,
+  showPercentage: true,
+  theme: window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
+};
+
+const persist = () => {};
+
+/* Helper to generate theme-appropriate colors for 'Surprise me' */
+function getRandomThemeColor() {
+  const isDark = state.theme === "dark";
+  if (isDark) {
+    const h = Math.random() * 360;
+    const s = 0.4 + Math.random() * 0.3;
+    const l = 0.2 + Math.random() * 0.2;
+    const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
+    const f = n => 255 * (l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1)));
+    return rgbToHex([f(0), f(8), f(4)]);
+  } else {
+    const h = Math.random() * 360, s = 0.65 + Math.random() * 0.3, l = 0.45 + Math.random() * 0.2;
+    const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
+    const f = n => 255 * (l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1)));
+    return rgbToHex([f(0), f(8), f(4)]);
+  }
+}
+
+/* Rebuild swatches dynamically based on current theme */
+function renderSwatches() {
+  const sw = $("swatches");
+  sw.innerHTML = "";
+  const currentPresets = state.theme === "dark" ? PRESETS_DARK : PRESETS_LIGHT;
+  currentPresets.forEach(hex => {
+    const b = document.createElement("button"); b.type = "button"; b.className = "sw"; b.style.background = hex;
+    b.dataset.hex = hex; b.setAttribute("aria-label", "Color " + hex);
+    b.onclick = () => setColor(hex); sw.appendChild(b);
+  });
+}
+
+/* Dark mode toggle switch */
+document.getElementById("darkModeToggle").onclick = () => {
+  state.theme = state.theme === "dark" ? "light" : "dark";
+  document.documentElement.setAttribute("data-theme", state.theme);
+  document.getElementById("darkModeToggle").textContent = state.theme === "dark" ? "☀️" : "🌙";
+  
+  const presets = state.theme === "dark" ? PRESETS_DARK : PRESETS_LIGHT;
+  if (!presets.includes(state.color)) {
+    state.color = presets[0];
+  }
+  
+  renderSwatches();
+  update();
+};
+
+const getInk = () => state.theme === "dark" ? "#f7f4ef" : "#151311";
+
+/* ===== dynamic proportional columns helper (min 4, max 8) ===== */
+function getCols() {
+  const n = state.jars.length;
+  if (n <= 0) return 4;
+  let cols = (state.colsOverride !== null && state.colsOverride !== undefined) ? state.colsOverride : Math.min(8, Math.max(4, n));
+  return Math.min(Math.max(4, cols), Math.max(4, n));
+}
+
+function updateColsSliderRange() {
+  const n = state.jars.length;
+  const slider = document.getElementById("colsSlider");
+  if (!slider) return;
+  
+  slider.min = 4;
+  slider.max = 8;
+  
+  if (state.colsOverride === null || state.colsOverride > 8 || state.colsOverride < 4) {
+    state.colsOverride = Math.min(8, Math.max(4, n || 4));
+  }
+  slider.value = state.colsOverride;
+  document.getElementById("colsVal").textContent = slider.value;
+}
 
 /* ===== color helpers ===== */
 const hexToRgb = h => { h = h.replace("#", ""); if (h.length === 3) h = [...h].map(x => x + x).join(""); const n = parseInt(h, 16); return [n >> 16 & 255, n >> 8 & 255, n & 255]; };
@@ -191,7 +711,7 @@ const lum = ([r, g, b]) => (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
 function rng(seed) { return () => { seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 
-/* ===== jar drawing (local box: 96 wide, 170 tall, lid at top) ===== */
+/* ===== jar drawing ===== */
 function roundRect(c, x, y, w, h, r) { c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
 function bodyPath(c) {
   c.beginPath(); c.moveTo(14, 32);
@@ -200,14 +720,15 @@ function bodyPath(c) {
   c.closePath();
 }
 function drawLid(c, dx = 0, dy = 0, rot = 0) {
+  const INK = getInk();
   c.save(); c.translate(48 + dx, 12 + dy); c.rotate(rot); c.translate(-48, -12);
-  c.beginPath(); roundRect(c, 6, 0, 84, 24, 6); c.fillStyle = "#fff"; c.fill();
+  c.beginPath(); roundRect(c, 6, 0, 84, 24, 6); c.fillStyle = state.theme === "dark" ? "#2c2520" : "#fff"; c.fill();
   c.lineWidth = 4.5; c.strokeStyle = INK; c.stroke();
   c.lineWidth = 2.4; c.beginPath();
   for (const y of [8, 16]) { c.moveTo(10, y); c.quadraticCurveTo(48, y + 3, 86, y); }
   c.stroke(); c.restore();
 }
-function teardrop(c, x, y, r, ox, oy) { // tail points toward (ox,oy)
+function teardrop(c, x, y, r, ox, oy) {
   const a = Math.atan2(oy - y, ox - x);
   c.moveTo(x + Math.cos(a) * r * 2.5, y + Math.sin(a) * r * 2.5);
   c.arc(x, y, r, a + Math.PI / 2, a + Math.PI * 1.5, false); c.closePath();
@@ -245,40 +766,41 @@ function collar(c, base, drips) {
   c.lineTo(1, base); c.quadraticCurveTo(-3, base, -3, base - 4); c.quadraticCurveTo(-4, 22, 4, 18); c.closePath();
 }
 
-/* Each jar gets one of six "overflow" looks, with its own random details. */
-const STYLE_NAMES = ["drips", "puddle", "foam", "geyser", "splash", "hearts"];
 function jarParams(idx) {
-  const r = rng(idx * 7919 + 101);
-  const row = Math.floor(idx / COLS), style = (idx % COLS + row * 3) % 6;
+  const COLS = getCols();
+  const override = state.overrides[idx];
+  const baseStyle = override !== undefined ? override : ((idx % COLS + Math.floor(idx / COLS) * 3) % 6);
+  const r = rng(idx * 7919 + 101 + baseStyle);
   const side = r() < 0.5 ? -1 : 1;
-  const P = { style, phase: r() * 6.28, r };
-  if (style === 0) { P.base = 40 + r() * 8; P.drips = makeDrips(r, 4 + (r() < 0.5 ? 1 : 0), P.base, 8, 125); }
-  if (style === 1) {
+  const P = { style: baseStyle, phase: r() * 6.28, r };
+  
+  if (baseStyle === 0) { P.base = 40 + r() * 8; P.drips = makeDrips(r, 4 + (r() < 0.5 ? 1 : 0), P.base, 8, 125); }
+  if (baseStyle === 1) {
     P.base = 40; P.drips = makeDrips(r, 3, P.base, 30, 90); P.drips[Math.floor(r() * 3)].L = 999;
     P.drips.forEach(d => d.L = Math.min(d.L, 164 - P.base - d.w * 0.6));
     const pts = [], rx = 64 + r() * 10, ry = 10 + r() * 3;
     for (let i = 0; i < 14; i++) { const a = i / 14 * Math.PI * 2, k = 0.86 + r() * 0.24; pts.push([48 + Math.cos(a) * rx * k, 170 + Math.sin(a) * ry * k]); }
     P.puddle = pts;
   }
-  if (style === 2) {
+  if (baseStyle === 2) {
     P.base = 38; P.drips = makeDrips(r, 3, P.base, 6, 45);
     P.foam = [];
     for (let i = 0; i < 14; i++) { const x = 48 + (r() - 0.5) * 88; P.foam.push([x, 28 - (1 - Math.abs(x - 48) / 46) * 34 - r() * 6, 7 + r() * 8]); }
     P.lid = { dx: side * (14 + r() * 8), dy: -24, rot: side * (0.2 + r() * 0.12) };
   }
-  if (style === 3) {
+  if (baseStyle === 3) {
     P.base = 40; P.drips = makeDrips(r, 4, P.base, 6, 70);
     P.drops = [[2 + r() * 8, -26, 4], [-10, -4 + r() * 6, 3.5], [-15, 20 + r() * 8, 3], [92 + r() * 6, -24, 4], [106, -2 + r() * 6, 3.5], [111, 22 + r() * 8, 3]];
     P.origin = [48, -20];
     P.lid = { dx: side * 36, dy: -26, rot: side * 0.6 };
   }
-  if (style === 4) {
+  if (baseStyle === 4) {
     P.base = 42; P.drips = makeDrips(r, 4, P.base, 10, 95);
     P.drops = []; P.origin = [48, 24];
     for (let i = 0; i < 6; i++) { const s = i % 2 ? 1 : -1; P.drops.push([48 + s * (60 + r() * 12), 4 + r() * 100, 2.6 + r() * 2]); }
     P.splats = [[-12 - r() * 6, 172, 7], [108 + r() * 6, 173, 6], [118, 166, 2.5], [-22, 166, 2.5]];
   }
-  if (style === 5) {
+  if (baseStyle === 5) {
     P.base = 44; P.drips = makeDrips(r, 5, P.base, 6, 105);
     P.hearts = [[14 + r() * 8, -14 - r() * 6, 7 + r() * 2], [48 + (r() - 0.5) * 10, -26, 9 + r() * 2], [80 + r() * 8, -12 - r() * 6, 6 + r() * 2]];
   }
@@ -286,42 +808,61 @@ function jarParams(idx) {
 }
 
 function drawJar(c, idx, level, rgb) {
+  const INK = getInk();
   const P = jarParams(idx), r = P.r, fill = css(rgb);
   c.save(); c.lineJoin = "round"; c.lineCap = "round";
 
-  // puddle sits under the jar
-  if (level === 5 && P.puddle) {
-    c.beginPath(); blob(c, P.puddle); c.lineWidth = 7; c.strokeStyle = INK; c.stroke(); c.fillStyle = fill; c.fill();
-    c.beginPath(); c.ellipse(20, 172, 10, 2.5, 0, 0, 7); c.fillStyle = "rgba(255,255,255,.55)"; c.fill();
+  const fillLum = lum(rgb);
+  const isDarkTheme = state.theme === "dark";
+
+  let surfStroke, bubbleStroke, overflowHighlight;
+  if (fillLum < 0.18) {
+    surfStroke = isDarkTheme ? lighten(rgb, .45) : "rgba(255,255,255,0.9)";
+    bubbleStroke = isDarkTheme ? css(mix(rgb, [255, 255, 255], .6), .85) : "rgba(255,255,255,0.95)";
+    overflowHighlight = isDarkTheme ? "rgba(255,255,255,.6)" : "rgba(255,255,255,0.9)";
+  } else if (fillLum > 0.6) {
+    surfStroke = darken(rgb, 0.4);
+    bubbleStroke = darken(rgb, 0.5);
+    overflowHighlight = "rgba(0,0,0,0.55)";
+  } else {
+    surfStroke = isDarkTheme ? lighten(rgb, .35) : lighten(rgb, .45);
+    bubbleStroke = isDarkTheme ? css(mix(rgb, [255, 255, 255], .5), .85) : css(mix(rgb, [255, 255, 255], .6), .85);
+    overflowHighlight = isDarkTheme ? "rgba(255,255,255,.5)" : "rgba(255,255,255,.6)";
   }
 
-  // liquid inside
-  c.save(); bodyPath(c); c.fillStyle = "#fff"; c.fill(); c.clip();
+  const isOverflow = level >= 5;
+
+  if (isOverflow && P.puddle) {
+    c.beginPath(); blob(c, P.puddle); c.lineWidth = 7; c.strokeStyle = INK; c.stroke(); c.fillStyle = fill; c.fill();
+    c.beginPath(); c.ellipse(20, 172, 10, 2.5, 0, 0, 7); c.fillStyle = fillLum > 0.6 ? "rgba(0,0,0,.3)" : (fillLum < 0.18 ? "rgba(255,255,255,0.4)" : "rgba(255,255,255,.55)"); c.fill();
+  }
+
+  c.save(); bodyPath(c); c.fillStyle = isDarkTheme ? "#12100e" : "#fff"; c.fill(); c.clip();
   if (level > 0) {
-    const top = 32, bottom = 170, frac = [0, .16, .36, .58, .8, 1][level];
-    const ly = level === 5 ? 28 : bottom - (bottom - top) * frac, amp = level === 5 ? 0 : 2.2;
+    const top = 32, bottom = 170;
+    const frac = Math.min(level / 5, 1);
+    const ly = isOverflow ? 28 : bottom - (bottom - top) * frac;
+    const amp = isOverflow ? 0 : 2.2;
     const g = c.createLinearGradient(0, ly, 0, bottom); g.addColorStop(0, lighten(rgb, .12)); g.addColorStop(1, darken(rgb, .2));
     const surf = () => { for (let x = -4; x <= 100; x += 4) c.lineTo(x, ly + Math.sin(x * 0.11 + P.phase) * amp); };
     c.beginPath(); c.moveTo(-4, ly); surf(); c.lineTo(100, 180); c.lineTo(-4, 180); c.closePath(); c.fillStyle = g; c.fill();
-    c.beginPath(); c.moveTo(-4, ly); surf(); c.strokeStyle = lighten(rgb, .45); c.lineWidth = 3; c.stroke();
-    c.strokeStyle = css(mix(rgb, [255, 255, 255], .6), .85); c.lineWidth = 1.6;
-    for (let i = 0; i < 2 + level; i++) {
+    c.beginPath(); c.moveTo(-4, ly); surf(); c.strokeStyle = surfStroke; c.lineWidth = 3; c.stroke();
+    c.strokeStyle = bubbleStroke; c.lineWidth = 1.6;
+    for (let i = 0; i < 2 + Math.floor(level); i++) {
       const bx = 18 + r() * 60, by = ly + 10 + r() * Math.max(0, bottom - ly - 22), br = 1.5 + r() * 2.6;
       c.beginPath(); c.arc(bx, by, br, 0, 7); c.stroke();
     }
   }
-  c.fillStyle = "rgba(255,255,255,.5)"; c.beginPath(); roundRect(c, 11, 50, 6, 78, 3); roundRect(c, 11, 134, 6, 10, 3); c.fill();
+  c.fillStyle = fillLum > 0.6 ? "rgba(0,0,0,.15)" : (fillLum < 0.18 ? "rgba(255,255,255,0.3)" : "rgba(255,255,255,.3)"); c.beginPath(); roundRect(c, 11, 50, 6, 78, 3); roundRect(c, 11, 134, 6, 10, 3); c.fill();
   c.restore();
 
-  // glass
   bodyPath(c); c.lineWidth = 4.5; c.strokeStyle = INK; c.stroke();
   c.lineWidth = 2.5; c.beginPath(); c.moveTo(18, 160); c.quadraticCurveTo(26, 165, 38, 164); c.moveTo(58, 164); c.quadraticCurveTo(70, 165, 78, 160); c.stroke();
-  c.beginPath(); roundRect(c, 12, 20, 72, 14, 4); c.fillStyle = level === 5 ? fill : "#fff"; c.fill(); c.lineWidth = 4; c.stroke();
+  c.beginPath(); roundRect(c, 12, 20, 72, 14, 4); c.fillStyle = isOverflow ? fill : (isDarkTheme ? "#12100e" : "#fff"); c.fill(); c.lineWidth = 4; c.stroke();
 
-  // overflow!
-  if (level === 5) {
+  if (isOverflow) {
     const shapes = [];
-    const foamFill = lighten(rgb, .55);
+    const foamFill = fillLum > 0.6 ? darken(rgb, .25) : (fillLum < 0.18 ? lighten(rgb, .45) : lighten(rgb, .55));
     if (P.style === 3) shapes.push({ fill, path: () => {
       c.moveTo(34, 24); c.quadraticCurveTo(40, 4, 36, -8);
       c.quadraticCurveTo(26, -20, 38, -24); c.quadraticCurveTo(44, -36, 52, -25);
@@ -337,50 +878,130 @@ function drawJar(c, idx, level, rgb) {
     for (const s of shapes) { c.beginPath(); s.path(); c.stroke(); }
     for (const s of shapes) { c.beginPath(); s.path(); c.fillStyle = s.fill; c.fill(); }
 
-    // shine
-    c.strokeStyle = "rgba(255,255,255,.6)"; c.lineWidth = 2.5;
+    c.strokeStyle = overflowHighlight; c.lineWidth = 2.5;
     c.beginPath(); c.moveTo(6, P.base - 14); c.quadraticCurveTo(8, 24, 18, 22);
     for (const d of P.drips) if (d.L > 22) { c.moveTo(d.cx - d.w * 0.22, P.base + 6); c.lineTo(d.cx - d.w * 0.22, P.base + d.L - 6); }
     if (P.hearts) for (const [x, y, s] of P.hearts) { c.moveTo(x - s * 0.75, y - s * 0.25); c.quadraticCurveTo(x - s * 0.7, y - s * 0.7, x - s * 0.35, y - s * 0.75); }
     c.stroke();
-    if (P.foam) { c.fillStyle = "rgba(255,255,255,.85)"; for (const [x, y, rad] of P.foam.slice(0, 6)) { c.beginPath(); c.arc(x - rad * 0.35, y - rad * 0.35, rad * 0.22, 0, 7); c.fill(); } }
+    if (P.foam) { c.fillStyle = fillLum > 0.6 ? "rgba(0,0,0,.4)" : (fillLum < 0.18 ? "rgba(255,255,255,0.9)" : "rgba(255,255,255,.85)"); for (const [x, y, rad] of P.foam.slice(0, 6)) { c.beginPath(); c.arc(x - rad * 0.35, y - rad * 0.35, rad * 0.22, 0, 7); c.fill(); } }
   }
 
-  // lid
-  if (level === 5 && P.lid) drawLid(c, P.lid.dx, P.lid.dy, P.lid.rot); else drawLid(c);
+  if (isOverflow && P.lid) drawLid(c, P.lid.dx, P.lid.dy, P.lid.rot); else drawLid(c);
   c.restore();
+}
+
+/* ===== text wrapping helper ===== */
+function getWrappedLines(c, text, maxWidth, maxLines) {
+  const paragraphs = text.split('\n');
+  let lines = [];
+
+  for (const para of paragraphs) {
+    if (!para.trim()) {
+      lines.push('');
+      continue;
+    }
+    const words = para.split(/\s+/);
+    let currentLine = words[0] || '';
+
+    for (let i = 1; i < words.length; i++) {
+      const word = words[i];
+      const width = c.measureText(currentLine + " " + word).width;
+      if (width < maxWidth) {
+        currentLine += " " + word;
+      } else {
+        lines.push(currentLine);
+        currentLine = word;
+      }
+    }
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+  }
+
+  if (lines.length > maxLines) {
+    const limited = lines.slice(0, maxLines);
+    let last = limited[maxLines - 1];
+    while (c.measureText(last + "...").width > maxWidth && last.length > 0) {
+      last = last.slice(0, -1);
+    }
+    limited[maxLines - 1] = last + "...";
+    return limited;
+  }
+  return lines;
 }
 
 /* ===== poster ===== */
 function drawPoster(canvas, scale) {
   const rgb = hexToRgb(state.color);
-  canvas.width = PW * scale; canvas.height = PH * scale;
+  const COLS = getCols();
+  const totalJars = state.jars.length;
+  const rows = totalJars === 0 ? 1 : Math.ceil(totalJars / COLS);
+
+  const ph = totalJars === 0 ? 300 : (260 + (rows - 1) * 345 + 360);
+  canvas.width = PW * scale; canvas.height = ph * scale;
   const c = canvas.getContext("2d");
   c.setTransform(scale, 0, 0, scale, 0, 0);
-  c.fillStyle = "#fff"; c.fillRect(0, 0, PW, PH);
 
-  c.fillStyle = INK; c.textBaseline = "alphabetic"; c.textAlign = "left";
-  c.font = "700 104px Oswald, Impact, 'Arial Narrow', sans-serif";
-  const tw = c.measureText("Kink Jars").width, lineW = 360, gap = 26, x0 = (PW - lineW - gap - tw) / 2, base = 140;
+  const isDark = state.theme === "dark";
+  const bgCanvas = isDark ? "#1c1815" : "#ffffff";
+  const textCanvas = isDark ? "#f7f4ef" : "#151311";
+  const mutedCanvas = isDark ? "#a3998f" : "#6b625a";
+
+  c.fillStyle = bgCanvas; c.fillRect(0, 0, PW, ph);
+
+  c.fillStyle = textCanvas; c.textBaseline = "alphabetic"; c.textAlign = "left";
+  c.font = "700 100px 'Oswald', sans-serif";
+  const headerText = (state.headerTitle && state.headerTitle.trim()) ? state.headerTitle.trim() : "Kink Jars";
+  const tw = c.measureText(headerText).width, lineW = 360, gap = 26, x0 = (PW - lineW - gap - tw) / 2, base = 140;
   c.fillRect(x0, base - 5, lineW, 7);
-  c.fillText("Kink Jars", x0 + lineW + gap, base);
+  c.fillText(headerText, x0 + lineW + gap, base);
   const name = state.name.trim();
   if (name) {
-    let size = 66; c.font = `${size}px "Permanent Marker", "Comic Sans MS", cursive`;
-    while (c.measureText(name).width > lineW - 12 && size > 20) { size -= 2; c.font = `${size}px "Permanent Marker", "Comic Sans MS", cursive`; }
+    let size = 66; c.font = `${size}px "Permanent Marker", cursive`;
+    while (c.measureText(name).width > lineW - 12 && size > 20) { size -= 2; c.font = `${size}px "Permanent Marker", cursive`; }
     c.textAlign = "center"; c.fillText(name, x0 + lineW / 2, base - 18);
   }
-  c.textAlign = "center"; c.font = "500 30px Oswald, 'Arial Narrow', sans-serif"; c.fillStyle = "#555";
-  c.fillText("(1 = a little  ·  5 = overflowing)", PW / 2, 200);
+  c.textAlign = "center"; c.font = "600 28px 'Oswald', sans-serif"; c.fillStyle = mutedCanvas;
+  c.fillText("(0% = empty  ·  100% = overflowing)", PW / 2, 200);
 
-  JARS.forEach((label, i) => {
+  state.jars.forEach((label, i) => {
     const col = i % COLS, row = Math.floor(i / COLS);
-    const cx = PW / 2 + (col - (COLS - 1) / 2) * 150, top = 260 + row * 345;
-    c.save(); c.translate(cx - 48, top); drawJar(c, i, state.answers[i], rgb); c.restore();
-    let size = 30; c.font = `600 ${size}px Oswald, 'Arial Narrow', sans-serif`;
-    while (label.some(l => c.measureText(l).width > 140) && size > 18) { size--; c.font = `600 ${size}px Oswald, 'Arial Narrow', sans-serif`; }
-    c.fillStyle = INK; c.textAlign = "center";
-    label.forEach((l, k) => c.fillText(l, cx, top + 170 + 44 + k * (size + 4)));
+    const itemsInThisRow = Math.min(COLS, totalJars - row * COLS);
+    const colSpacing = Math.min(150, PW / (COLS + 1));
+    const cx = PW / 2 + (col - (itemsInThisRow - 1) / 2) * colSpacing;
+    const top = 260 + row * 345;
+    const percentVal = state.answers[i] !== undefined ? state.answers[i] : 0;
+    const jarLevel = (percentVal / 100) * 5;
+    c.save(); c.translate(cx - 48, top); drawJar(c, i, jarLevel, rgb); c.restore();
+    
+    if (state.showPercentage) {
+      c.save();
+      c.font = "700 20px 'Oswald', sans-serif";
+      c.fillStyle = textCanvas;
+      c.textAlign = "center";
+      c.textBaseline = "bottom";
+      c.fillText(`${percentVal}%`, cx, top - 2);
+      c.restore();
+    }
+
+    const text = label.join(" ");
+    let size = 26; 
+    let lines = [];
+    const maxWidth = 140;
+
+    while (size >= 18) {
+      c.font = `600 ${size}px 'Oswald', sans-serif`;
+      lines = getWrappedLines(c, text, maxWidth, 3);
+      if (lines.length <= 3) break;
+      size--;
+    }
+    c.font = `600 ${size}px 'Oswald', sans-serif`;
+    lines = getWrappedLines(c, text, maxWidth, 3);
+
+    c.fillStyle = textCanvas; c.textAlign = "center";
+    lines.forEach((l, k) => {
+      c.fillText(l, cx, top + 170 + 36 + k * (size + 4));
+    });
   });
 }
 
@@ -391,31 +1012,257 @@ function drawMini(canvas, idx, level, rgb) {
   drawJar(c, idx, level, rgb);
 }
 
-/* ===== UI ===== */
+/* ===== UI & Undo Toast state ===== */
 const $ = id => document.getElementById(id);
-const qWrap = $("questions"), minis = [];
-JARS.forEach((label, i) => {
-  const text = label.join(" ");
-  const q = document.createElement("div"); q.className = "q";
-  q.innerHTML = `<canvas aria-hidden="true"></canvas><div><div class="qnum">${i + 1} of ${JARS.length}</div><div class="qlabel"></div><div class="scale" role="group"></div><div class="ends"><span>a little</span><span>overflowing</span></div></div>`;
-  q.querySelector(".qlabel").textContent = text;
-  const sc = q.querySelector(".scale"); sc.setAttribute("aria-label", text);
-  for (let v = 1; v <= 5; v++) {
-    const b = document.createElement("button"); b.type = "button"; b.textContent = v;
-    b.setAttribute("aria-label", `${text}: ${v} out of 5`);
-    b.onclick = () => { state.answers[i] = state.answers[i] === v ? 0 : v; persist(); update(); };
-    sc.appendChild(b);
-  }
-  minis.push({ canvas: q.querySelector("canvas"), buttons: [...sc.children] });
-  qWrap.appendChild(q);
-});
+const qWrap = $("questions");
+let minis = [];
+let lastDeleted = null;
 
-const sw = $("swatches");
-PRESETS.forEach(hex => {
-  const b = document.createElement("button"); b.type = "button"; b.className = "sw"; b.style.background = hex;
-  b.dataset.hex = hex; b.setAttribute("aria-label", "Color " + hex);
-  b.onclick = () => setColor(hex); sw.appendChild(b);
-});
+function showToast(msg, undoCallback) {
+  const t = $("toast");
+  $("toastMsg").textContent = msg;
+  t.classList.add("show");
+  const undoBtn = $("toastUndo");
+  undoBtn.onclick = () => {
+    if (undoCallback) undoCallback();
+    t.classList.remove("show");
+  };
+  setTimeout(() => { t.classList.remove("show"); }, 5000);
+}
+
+function escapeHtml(str) {
+  return str.replace(/"/g, '&quot;');
+}
+
+function checkJarLimit() {
+  const addBtn = $("addKink");
+  if (state.jars.length >= MAX_JARS) {
+    addBtn.disabled = true;
+    addBtn.title = "Maximum limit of 80 jars reached";
+  } else {
+    addBtn.disabled = false;
+    addBtn.title = "";
+  }
+}
+
+function buildQuestions() {
+  qWrap.innerHTML = "";
+  minis = [];
+
+  state.jars.forEach((label, i) => {
+    const text = label.join(" ");
+    const currentVal = state.answers[i] !== undefined ? state.answers[i] : 0;
+    
+    const q = document.createElement("div"); 
+    q.className = "q";
+    q.dataset.index = i;
+
+    q.innerHTML = `
+      <div class="drag-handle" title="Drag to reorder">⠿</div>
+      <canvas aria-hidden="true"></canvas>
+      <div>
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div class="qnum">Jar #${i + 1}</div>
+          <button type="button" class="shuffle-btn" data-index="${i}" title="Shuffle jar style">🎲</button>
+        </div>
+        <div style="display: flex; gap: 8px; margin: 4px 0 8px; align-items: center;">
+          <textarea class="kink-name-input" maxlength="48" data-index="${i}" rows="1" placeholder="Click here to edit!">${escapeHtml(text)}</textarea>
+          <button type="button" class="ghost remove-kink" data-index="${i}" style="padding: 10px 14px; font-size: 14px;" title="Remove kink">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+          </button>
+        </div>
+        <div class="rating-control">
+          <input type="range" class="rating-slider" min="0" max="100" step="5" value="${currentVal}" aria-label="${text}">
+          <output class="rating-val">${currentVal}%</output>
+        </div>
+        <div class="ends"><span>0% (empty)</span><span>100% (overflow)</span></div>
+      </div>
+    `;
+
+    /* Pointer Events for Real-Time Smooth Dragging */
+    const handle = q.querySelector(".drag-handle");
+    handle.onpointerdown = (e) => {
+      e.preventDefault();
+      handle.setPointerCapture(e.pointerId);
+
+      const rect = q.getBoundingClientRect();
+      const startY = e.clientY;
+      const offsetY = startY - rect.top;
+      
+      q.classList.add("dragging");
+
+      const ghost = q.cloneNode(true);
+      ghost.style.position = "fixed";
+      ghost.style.left = rect.left + "px";
+      ghost.style.top = rect.top + "px";
+      ghost.style.width = rect.width + "px";
+      ghost.style.zIndex = "1000";
+      ghost.style.pointerEvents = "none";
+      ghost.style.boxShadow = "0 12px 40px rgba(0,0,0,0.25)";
+
+      const origCanvas = q.querySelector("canvas");
+      const ghostCanvas = ghost.querySelector("canvas");
+      if (origCanvas && ghostCanvas) {
+        ghostCanvas.width = origCanvas.width;
+        ghostCanvas.height = origCanvas.height;
+        ghostCanvas.getContext("2d").drawImage(origCanvas, 0, 0);
+      }
+
+      document.body.appendChild(ghost);
+
+        const onPointerMove = (moveEvent) => {
+        const currentY = moveEvent.clientY;
+        ghost.style.top = (currentY - offsetY) + "px";
+
+        const items = [...qWrap.querySelectorAll(".q:not(.dragging)")];
+        let inserted = false;
+        for (const item of items) {
+          const rect = item.getBoundingClientRect();
+          if (currentY < rect.top + rect.height / 2) {
+            qWrap.insertBefore(q, item);
+            inserted = true;
+            break;
+          }
+        }
+        if (!inserted) {
+          qWrap.appendChild(q);
+        }
+      };
+
+      const onPointerUp = (upEvent) => {
+        handle.releasePointerCapture(upEvent.pointerId);
+        ghost.remove();
+        window.removeEventListener("pointermove", onPointerMove);
+        window.removeEventListener("pointerup", onPointerUp);
+
+        const newJars = [];
+        const newAnswers = [];
+        const newOverrides = {};
+        
+        [...qWrap.querySelectorAll(".q")].forEach((el, newIdx) => {
+          const oldIdx = parseInt(el.dataset.index, 10);
+          newJars.push(state.jars[oldIdx]);
+          newAnswers.push(state.answers[oldIdx]);
+          if (state.overrides[oldIdx] !== undefined) {
+            newOverrides[newIdx] = state.overrides[oldIdx];
+          }
+        });
+
+        state.jars = newJars;
+        state.answers = newAnswers;
+        state.overrides = newOverrides;
+
+        buildQuestions();
+        updateColsSliderRange();
+        update();
+      };
+
+      window.addEventListener("pointermove", onPointerMove);
+      window.addEventListener("pointerup", onPointerUp);
+    };
+
+    const nameInput = q.querySelector(".kink-name-input");
+    
+    nameInput.addEventListener("keydown", e => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        e.target.blur();
+      }
+    });
+
+    nameInput.addEventListener("input", e => {
+      const cleanVal = e.target.value.replace(/[\r\n]+/g, " ");
+      if (e.target.value !== cleanVal) {
+        e.target.value = cleanVal;
+      }
+      state.jars[i] = [cleanVal];
+      update();
+    });
+
+    q.querySelector(".shuffle-btn").onclick = () => {
+      const currentOverride = state.overrides[i] !== undefined ? state.overrides[i] : ((i % getCols() + Math.floor(i / getCols()) * 3) % 6);
+      state.overrides[i] = (currentOverride + 1) % 6;
+      update();
+    };
+
+    q.querySelector(".remove-kink").onclick = () => {
+      if (state.jars.length <= 1) {
+        alert("You must keep at least one kink.");
+        return;
+      }
+      
+      q.style.opacity = "0";
+      q.style.transform = "scale(0.95)";
+      setTimeout(() => {
+        lastDeleted = { jar: state.jars[i], answer: state.answers[i], override: state.overrides[i], index: i };
+        state.jars.splice(i, 1);
+        state.answers.splice(i, 1);
+        delete state.overrides[i];
+        
+        if (state.colsOverride > state.jars.length) {
+          state.colsOverride = Math.max(4, state.jars.length);
+        }
+
+        buildQuestions();
+        updateColsSliderRange();
+        update();
+        showToast("Kink deleted.", () => {
+          state.jars.splice(lastDeleted.index, 0, lastDeleted.jar);
+          state.answers.splice(lastDeleted.index, 0, lastDeleted.answer);
+          if (lastDeleted.override !== undefined) state.overrides[lastDeleted.index] = lastDeleted.override;
+          buildQuestions();
+          updateColsSliderRange();
+          update();
+        });
+      }, 200);
+    };
+
+    const slider = q.querySelector(".rating-slider");
+    const output = q.querySelector(".rating-val");
+
+    slider.addEventListener("input", e => {
+      const val = parseInt(e.target.value, 10);
+      state.answers[i] = val;
+      output.textContent = val + "%";
+      update();
+    });
+
+    minis.push({ canvas: q.querySelector("canvas"), slider, output });
+    qWrap.appendChild(q);
+  });
+  
+  checkJarLimit();
+}
+
+$("addKink").onclick = () => {
+  if (state.jars.length >= MAX_JARS) return;
+  state.jars.push([""]);
+  state.answers.push(0);
+  state.colsOverride = Math.min(8, state.jars.length);
+
+  buildQuestions();
+  updateColsSliderRange();
+  update();
+  
+  const inputs = qWrap.querySelectorAll(".kink-name-input");
+  if (inputs.length > 0) {
+    const lastInput = inputs[inputs.length - 1];
+    lastInput.focus();
+    lastInput.select();
+    lastInput.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+};
+
+$("loadStarter").onclick = () => {
+  state.jars = STARTER_JARS.map(x => [...x]);
+  state.answers = STARTER_JARS.map(() => 60);
+  state.overrides = {};
+  state.colsOverride = Math.min(8, state.jars.length);
+  buildQuestions();
+  updateColsSliderRange();
+  update();
+};
+
 ["r", "g", "b"].forEach((k, n) => $(k).addEventListener("input", () => {
   const a = hexToRgb(state.color); a[n] = +$(k).value; setColor(rgbToHex(a));
 }));
@@ -424,39 +1271,71 @@ $("hex").addEventListener("input", e => {
   if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(v)) setColor(rgbToHex(hexToRgb(v)), true);
 });
 $("surprise").onclick = () => {
-  const h = Math.random() * 360, s = 0.65 + Math.random() * 0.3, l = 0.45 + Math.random() * 0.2;
-  const k = n => (n + h / 30) % 12, a = s * Math.min(l, 1 - l);
-  const f = n => 255 * (l - a * Math.max(-1, Math.min(k(n) - 3, 9 - k(n), 1)));
-  setColor(rgbToHex([f(0), f(8), f(4)]));
+  setColor(getRandomThemeColor());
 };
 $("name").value = state.name;
-$("name").addEventListener("input", e => { state.name = e.target.value; persist(); update(); });
+$("name").addEventListener("input", e => { state.name = e.target.value; update(); });
 
-function setColor(hex, fromHexBox) { state.color = hex.toLowerCase(); persist(); if (!fromHexBox) $("hex").value = state.color.toUpperCase(); update(); }
+$("headerTitle").value = state.headerTitle;
+$("headerTitle").addEventListener("input", e => { state.headerTitle = e.target.value; update(); });
+
+$("colsSlider").addEventListener("input", e => {
+  state.colsOverride = parseInt(e.target.value, 10);
+  $("colsVal").textContent = state.colsOverride;
+  update();
+});
+
+$("showPercentage").addEventListener("change", e => {
+  state.showPercentage = e.target.checked;
+  update();
+});
+
+function setColor(hex, fromHexBox) { state.color = hex.toLowerCase(); if (!fromHexBox) $("hex").value = state.color.toUpperCase(); update(); }
 
 let queued = false;
 function update() { if (queued) return; queued = true; requestAnimationFrame(() => { queued = false; render(); }); }
 function render() {
   const rgb = hexToRgb(state.color), root = document.documentElement.style;
-  root.setProperty("--c", state.color); root.setProperty("--on-c", lum(rgb) > 0.6 ? INK : "#fff");
+  root.setProperty("--c", state.color); 
+  
+  if (state.theme === "dark" && lum(rgb) > 0.6) {
+    root.setProperty("--on-c", "#12100e");
+  } else {
+    root.setProperty("--on-c", lum(rgb) > 0.6 ? getInk() : "#fff");
+  }
+
   ["r", "g", "b"].forEach((k, n) => {
-    $(k).value = rgb[n]; $(k + "v").textContent = rgb[n];
+    $(k).value = rgb[n];$(k + "v").textContent = rgb[n];
     const lo = [...rgb], hi = [...rgb]; lo[n] = 0; hi[n] = 255;
     $(k).style.background = `linear-gradient(to right, ${css(lo)}, ${css(hi)})`;
   });
   if (document.activeElement !== $("hex")) $("hex").value = state.color.toUpperCase();
+  const sw = $("swatches");
   [...sw.children].forEach(b => b.setAttribute("aria-pressed", b.dataset.hex === state.color));
   drawMini($("pv1"), 3, 2, rgb); drawMini($("pv2"), 9, 4, rgb); drawMini($("pv3"), 2, 5, rgb);
+  
   minis.forEach((m, i) => {
-    drawMini(m.canvas, i, state.answers[i], rgb);
-    m.buttons.forEach((b, k) => b.setAttribute("aria-pressed", state.answers[i] === k + 1));
+    const val = state.answers[i] !== undefined ? state.answers[i] : 0;
+    const jarLevel = (val / 100) * 5;
+    drawMini(m.canvas, i, jarLevel, rgb);
+    if (m.slider && document.activeElement !== m.slider) {
+      m.slider.value = val;
+      m.output.textContent = val + "%";
+    }
   });
-  const n = state.answers.filter(Boolean).length;
-  $("progress").textContent = `${n} of ${JARS.length} filled`;
+
+  const n = state.answers.filter(v => v > 0).length;
+  $("progress").textContent = `${n} of ${state.jars.length} filled`;
   drawPoster($("poster"), 1);
+  checkJarLimit();
 }
 
+window.addEventListener("resize", () => {
+  update();
+});
+
 async function save() {
+  confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
   const out = document.createElement("canvas");
   drawPoster(out, 2);
   const blob = await new Promise(res => out.toBlob(res, "image/png"));
@@ -465,24 +1344,55 @@ async function save() {
   const file = new File([blob], fname, { type: "image/png" });
   const touch = matchMedia("(pointer: coarse)").matches;
   if (touch && navigator.canShare && navigator.canShare({ files: [file] })) {
-    try { await navigator.share({ files: [file] }); return; }
+    try { await navigator.share({ files: [file], title: 'My Kink Jars', text: 'Check out my filled kink jars!' }); return; }
     catch (e) { if (e.name === "AbortError") return; }
   }
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a"); a.href = url; a.download = fname;
   document.body.appendChild(a); a.click(); a.remove();
-  $("modalImg").src = url; $("modal").hidden = false; $("closeModal").focus();
+  
+  $("modalImg").src = url;
+  const modal = $("modal");
+  modal.classList.add("show");
+  $("closeModal").focus();
 }
 $("save").onclick = save; $("saveBar").onclick = save;
-$("closeModal").onclick = () => { $("modal").hidden = true; };
-$("modal").addEventListener("click", e => { if (e.target.id === "modal") $("modal").hidden = true; });
+
+const closeModal = () => {
+  const modal = $("modal");
+  modal.classList.remove("show");
+};
+$("closeModal").onclick = closeModal;
+$("modal").addEventListener("click", e => { if (e.target.id === "modal") closeModal(); });
+
 $("reset").onclick = () => {
   if (!confirm("Empty all the jars and start over?")) return;
-  state.answers = JARS.map(() => 0); state.name = ""; $("name").value = ""; persist(); update(); scrollTo({ top: 0, behavior: "smooth" });
+  state.jars = DEFAULT_JARS;
+  state.answers = DEFAULT_JARS.map(() => 0); 
+  state.overrides = {};
+  state.name = ""; 
+  state.headerTitle = "Kink Jars";
+  state.colsOverride = null;
+  state.showPercentage = true;
+  $("name").value = ""; 
+  $("headerTitle").value = "Kink Jars";
+  $("showPercentage").checked = true;
+  buildQuestions();
+  updateColsSliderRange();
+  update(); 
+  scrollTo({ top: 0, behavior: "smooth" });
 };
 
+document.documentElement.setAttribute("data-theme", state.theme);
+document.getElementById("darkModeToggle").textContent = state.theme === "dark" ? "☀️" : "🌙";
+
+state.color = (state.theme === "dark" ? PRESETS_DARK : PRESETS_LIGHT)[0];
+
+renderSwatches();
+buildQuestions();
+updateColsSliderRange();
 render();
-Promise.all(["700 104px Oswald, Impact, 'Arial Narrow', sans-serif", "600 30px Oswald", "500 30px Oswald, 'Arial Narrow', sans-serif", '66px "Permanent Marker"'].map(f => document.fonts.load(f)))
+Promise.all(["700 100px 'Oswald', sans-serif", "600 28px 'Oswald', sans-serif", '66px "Permanent Marker"'].map(f => document.fonts.load(f)))
   .catch(() => {}).then(() => document.fonts.ready).then(render);
 </script>
 </body>
